@@ -1,0 +1,50 @@
+describe('user can like blog', function (){
+    beforeEach(function() {
+        //cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
+
+        // Create a user
+        const user = {
+          name: 'Aqsa',
+          username: 'aqsa11',
+          password: '123456789'
+        }
+        cy.request('POST', `${Cypress.env('BACKEND')}/users`, user)
+    
+        // Visit the app
+        cy.visit('')
+    })
+    describe('When logged in', function() {
+        beforeEach(function() {
+            // Log in the user
+            cy.get('#username').type('aqsa11')
+            cy.get('#password').type('123456789')
+            cy.get('#login-button').click()
+            
+            // Verify login succeeded
+            cy.contains('Aqsa logged in')
+            
+            // Create a blog
+            cy.contains('create new blog').click()
+            cy.get('#title').type('Test Blog Title')
+            cy.get('#author').type('Test Author')
+            cy.get('#url').type('http://testblog.com')
+            cy.get('#create-blog-button').click()
+            
+            // Ensure the blog is visible in the list
+            cy.contains('Test Blog Title Test Author')
+          })
+          it('User can like a blog', function() {
+            cy.contains('Test Blog Title Test Author')
+              .parent() 
+              .find('#like-button')
+              .click()
+            
+            // Verify the like count has increased
+            cy.contains('Test Blog Title Test Author')
+              .parent()
+              .contains('likes 1') // Adjust this if your like count is displayed differently
+          })
+      
+    })
+    
+})
